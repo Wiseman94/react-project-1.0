@@ -9,6 +9,10 @@ var my_news = [
         text: 'Считаю,	что	$	должен	стоить	35	рублей!'
     },
     {
+        author: 'Lydia',
+        text: 'Call me baby'
+    },
+    {
         author: 'Гость',
         text: 'Бесплатно.	Скачать.	Лучший	сайт	-	http://localhost:3000'
     }
@@ -26,7 +30,7 @@ var Article = React.createClass ({
         return (
 
          <div className="article">
-             <p className="news-author">{author}</p>
+             <p className="news-author">{author}:</p>
              <p className="news-text">{text}</p>
          </div>
         )
@@ -34,6 +38,14 @@ var Article = React.createClass ({
 });
 
 var News = React.createClass({
+
+    propTypes: {
+        data: React.PropTypes.shape({
+            author: React.PropTypes.string.isRequired,
+            text: React.PropTypes.string.isRequired
+        })
+    },
+
     render: function () {
 
         var data = this.props.data;
@@ -71,7 +83,7 @@ var App = React.createClass({
         return (
             <div className="app">
                 <h3 className="title">News</h3>
-                <News  data={my_news}  />
+                <News data={my_news}/>
             </div>
         );
     }
