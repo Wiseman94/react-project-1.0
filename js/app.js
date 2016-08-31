@@ -1,3 +1,7 @@
+
+
+'use strict';
+
 var my_news = [
 
     {
@@ -17,7 +21,7 @@ var my_news = [
     }
 ];
 
-// my_news = [];
+window.ee	=	new	EventEmitter();
 
 var Article = React.createClass ({
 
@@ -30,7 +34,6 @@ var Article = React.createClass ({
     },
 
     getInitialState: function() {
-
         return {
             visible: false
         }
@@ -130,10 +133,24 @@ var AddNews = React.createClass({
     },
 
     onBtnClickHandler: function (e) {
+
         e.preventDefault();
+        var textEl = ReactDOM.findDOMNode(this.refs.text);
         var author = ReactDOM.findDOMNode(this.refs.author).value;
-        var text = ReactDOM.findDOMNode(this.refs.text).value;
-        alert(author + '\n' + text);
+        var text = textEl.value;
+        var item = [
+            {author: author,
+                text: text,
+                bigText: '...'
+            }
+        ];
+
+        /*	Сгенерируй	событие	'News.add'	и	передай	в качестве	данных	-	item. 	*/
+
+        window.ee.emit('News.add',	item)
+
+        textEl.value = '';
+        this.setState({textEmpty:	true});
     },
 
     onFieldChange: function(fieldName, e){
@@ -157,11 +174,29 @@ var AddNews = React.createClass({
 
         return (
             <form className='add cf'>
-                <input type='text' onChange={this.onFieldChange.bind(this, 'authorEmpty')} className='add__author' defaultValue='' placeholder='Ваше имя' ref='author'/>
-                <textarea onChange={this.onFieldChange.bind(this, 'textEmpty')} className='add__text' defaultValue='' placeholder='Текст новости' ref='text'/>
-                <input type='checkbox' onChange={this.onCheckChange} defaultChecked={false} ref='checkrule' />
+                <input type='text'
+                       onChange={this.onFieldChange.bind(this, 'authorEmpty')}
+                       className='add__author' defaultValue=''
+                       placeholder='Ваше имя'
+                       ref='author'
+                />
+                <textarea onChange={this.onFieldChange.bind(this, 'textEmpty')}
+                          className='add__text' defaultValue=''
+                          placeholder='Текст новости'
+                          ref='text'/>
+                <input type='checkbox'
+                       onChange={this.onCheckChange}
+                       defaultChecked={false}
+                       ref='checkrule' />
                 <label className='add__checkrule'> Я согласен с правилами </label>
-                <button className='add__btn' onClick={this.onBtnClickHandler} ref='alert_button' disabled={authorEmpty || textEmpty || ruleUnchecked}> Показать alert</button>
+                <button onClick={this.onBtnClickHandler}
+                        className='add__btn'
+                        ref='insert-news_button'
+                        disabled={authorEmpty || textEmpty || ruleUnchecked}>
+
+                    Добавить новость
+
+                </button>
             </form>
 
         )
@@ -169,12 +204,35 @@ var AddNews = React.createClass({
 });
 
 var App = React.createClass({
+
+    getInitialState: function() {
+
+        return {
+            news: my_news
+        };
+    },
+
+    componentDidMount: function () {
+        /*	Слушай	событие	"Создана	новость" если событие произошло, обнови	this.state.news	*/
+
+        var self = this;
+        window.ee.addListener('News.add', function (item) {
+            var nextNews = item.concat(self.state.news); /*	Мы	создали	новый массив, в	котором	первым элементом поставили новую новость, чтобы	она	была верхней в списке.
+             */
+            self.setState({news: nextNews});
+        });
+    },
+    componentWillUnmount: function () {
+        /*	Больше	не	слушай	событие	"Создана	новость"	*/
+        window.ee.removeListener('News.add');
+    },
+
     render: function () {
         return (
             <div className="app">
                 <h3 className="title">News</h3>
                 <AddNews/>
-                <News  data={my_news}  />
+                <News  data={this.state.news}  />
             </div>
         );
     }
