@@ -1,7 +1,40 @@
-.user {
-    display: inline-block;
-    padding: 20px;
+#starsFrame, #answerFrame {
+    width: 40%;
+    float: left;
+
 }
-.name {
-    margin: 5px 0;
+#starsFrame .glyphicon {
+    margin: 5px;
+    font-size: 2em;
+}
+#buttonFrame {
+    margin-top: 50px;
+    width: 20%;
+    float: left;
+    text-align: center;
+}
+
+.well {
+    text-align: center;
+}
+
+#numberFrame {
+    margin-top: 50px;
+}
+
+#numberFrame .number, #answerFrame span {
+    display: inline-block;
+    margin: 0.5em;
+    background-color: #bbb;
+    width: 30px;
+    text-align: center;
+    font-size: 22px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+#numberFrame .selected-true {
+    background-color: #e8e8e8;
+    color: #ddd;
+    cursor: not-allowed;
 }
